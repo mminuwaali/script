@@ -5,9 +5,7 @@ const puppeteer = require('puppeteer');
 const [app, port] = [express(), process.env.PORT || 3000];
 
 app.get('/', async (_req, res) => {
-    res.status(200).json({ message: 'Successfully logged in.' });
     try {
-
         // Launch the browser
         const browser = await puppeteer.launch({ headless: true });
         const page = await browser.newPage();
@@ -53,8 +51,11 @@ app.get('/', async (_req, res) => {
         // Close the browser
         await browser.close();
         console.log('Browser closed.');
+
+        res.status(200).json({ message: 'Successfully logged in.' });
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+        console.error('Error:', error);
+        res.status(500).json({ error: error.message });
     }
 });
 
