@@ -7,7 +7,7 @@ const [app, port] = [express(), process.env.PORT || 3000];
 app.get('/', async (_req, res) => {
     try {
         // Launch the browser
-        const browser = await puppeteer.launch({ headless: true });
+        const browser = await puppeteer.launch({ headless: true,executablePath: puppeteer.executablePath() });
         const page = await browser.newPage();
         console.log('Browser launched');
 
