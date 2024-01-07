@@ -1,51 +1,63 @@
-const { launch } = require('puppeteer');
+require('dotenv').config();
+const express = require('express');
+const puppeteer = require('puppeteer');
 
-(async () => {
-    // Launch the browser
-    const browser = await launch({ headless: true });
-    const page = await browser.newPage();
-    console.log('Browser launched');
+const [app, port] = [express(), process.env.PORT || 3000];
 
-    page.setDefaultTimeout(30000);
+app.get('/', async (_req, res) => {
+    res.status(200).json({ message: 'Successfully logged in.' });
+    try {
 
-    // Navigate to the website
-    await page.goto('https://faucetearner.org/login.php');
-    console.log('Navigated to the website');
+        // Launch the browser
+        const browser = await puppeteer.launch({ headless: true });
+        const page = await browser.newPage();
+        console.log('Browser launched');
 
-    // Wait for the form to be present
-    await page.waitForSelector('form');
-    console.log('Form is present');
+        page.setDefaultTimeout(30000);
 
-    // Type email and password
-    await page.type('#email', 'mminuwaali'); // Replace 'yourEmail' with your actual email
-    await page.type('#password', 'Crvd6cwJTyv8bqS'); // Replace 'yourPassword' with your actual password
-    console.log('Email and password entered.');
+        // Navigate to the website
+        await page.goto('https://faucetearner.org/login.php');
+        console.log('Navigated to the website');
 
-    // Click the submit button
-    await page.click('.reqbtn.btn-submit.w-100');
-    console.log('Submit button clicked.');
+        // Wait for the form to be present
+        await page.waitForSelector('form');
+        console.log('Form is present');
 
-    // Wait for the next page to load (you may need to adjust the navigation condition)
-    await page.waitForNavigation();
-    console.log('Successfully logged in.');
+        // Type email and password
+        await page.type('#email', 'mminuwaali'); // Replace 'yourEmail' with your actual email
+        await page.type('#password', 'Crvd6cwJTyv8bqS'); // Replace 'yourPassword' with your actual password
+        console.log('Email and password entered.');
 
-    // Wait for the button to be enabled or close the browser after 30 seconds
-    const buttonSelector = '[onclick="apireq()"]'; // Replace with the actual selector of the button
-    const buttonEnabled = await page.waitForFunction(
-        (selector) => !document.querySelector(selector).hasAttribute('disabled'),
-        { polling: 'raf' }, // Use 'raf' for smoother polling
-        buttonSelector,
-        30000
-    );
-    console.log('Button enabled.');
+        // Click the submit button
+        await page.click('.reqbtn.btn-submit.w-100');
+        console.log('Submit button clicked.');
 
-    if (buttonEnabled) await page.click(buttonSelector);
-    else return await browser.close();
-    console.log('Button clicked.');
+        // Wait for the next page to load (you may need to adjust the navigation condition)
+        await page.waitForNavigation();
+        console.log('Successfully logged in.');
 
-    await new Promise((resolve) => setTimeout(resolve, 3000)); // Wait for 3 seconds before closing the browser
+        // Wait for the button to be enabled or close the browser after 30 seconds
+        const buttonSelector = '[onclick="apireq()"]'; // Replace with the actual selector of the button
+        const buttonEnabled = await page.waitForFunction(
+            (selector) => !document.querySelector(selector).hasAttribute('disabled'),
+            { polling: 'raf' }, // Use 'raf' for smoother polling
+            buttonSelector,
+            30000
+        );
+        console.log('Button enabled.');
 
-    // Close the browser
-    await browser.close();
-    console.log('Browser closed.');
-})();
+        if (buttonEnabled) await page.click(buttonSelector);
+        else return await browser.close();
+        console.log('Button clicked.');
+
+        // Close the browser
+        await browser.close();
+        console.log('Browser closed.');
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+});
+
+app.listen(port, () => {
+    console.log(`Server listening on port ${port}`);
+});
