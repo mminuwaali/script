@@ -6,9 +6,11 @@ const [app, port] = [express(), process.env.PORT || 3000];
 
 app.get('/', async (_req, res) => {
     try {
+        res.status(200).json({ message: 'Successfully logged in.' });
+
         // Launch the browser
         const browser = await puppeteer.launch({
-            headless: true,
+            headless: false,
             args: ['--no-sandbox', '--disable-setuid-sandbox', '--single-process', '--no-zygote'],
             executablePath: process.env.NODE_ENV === 'production' ? process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath()
         });
@@ -52,11 +54,35 @@ app.get('/', async (_req, res) => {
         else return await browser.close();
         console.log('Button clicked.');
 
+        // Navigate to the dashboard
+        await page.goto('https://faucetearner.org/dashboard.php');
+        console.log('going to the dashboard');
+
+
+        let balanceElementTag = await page.waitForSelector('.card.p-3.mb-2 .text-start .fs-4');
+
+        let elementTextContent = await balanceElementTag.getProperty('textContent')
+        let elementText = await elementTextContent.jsonValue();
+        console.log('Balance:', elementText);
+
+        // get the text content of the balanceElement
+        // await page.waitForSelector('div:contains("Total Balance:") + b');
+        // console.log('Balance is present.');
+
+        // await page.goto('https://faucetearner.org/dashboard.php');
+        // console.log('Navigated to the dashboard.');
+
+        // get the content of a b tag that is after a div tag with the content "Total Balance:"
+        // const balance = await page.evaluate(() => {
+        //     const element = document.querySelector('div:contains("Total Balance:") + b');
+        //     return element ? element.innerText : null;
+        // });
+        // console.log('Balance:', balance);
+
+
         // Close the browser
         await browser.close();
         console.log('Browser closed.');
-
-        res.status(200).json({ message: 'Successfully logged in.' });
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: error.message });
