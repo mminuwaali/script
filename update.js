@@ -26,7 +26,7 @@ const scheduleButtonClick = async (page) => {
 // mminuwaali@gmail.com
 (async () => {
     let browser = await puppeteer.launch({
-        headless: false,
+        headless: true,
         args: ['--no-sandbox', '--disable-setuid-sandbox', '--single-process', '--no-zygote'],
         executablePath: process.env.NODE_ENV === 'production' ? process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath()
     });
@@ -70,7 +70,7 @@ const scheduleButtonClick = async (page) => {
 // mminuwaali.coding@gmail.com
 (async () => {
     let browser = await puppeteer.launch({
-        headless: false,
+        headless: true,
         args: ['--no-sandbox', '--disable-setuid-sandbox', '--single-process', '--no-zygote'],
         executablePath: process.env.NODE_ENV === 'production' ? process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath()
     });
