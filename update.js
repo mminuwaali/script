@@ -112,7 +112,7 @@ const scheduleButtonClick = async (page) => {
 })();
 
 app.get('/', (_req, res) => {
-    res.status(200).json({ message: 'received request' });
+    return res.status(200).json({message:'Success'});
 });
 
 app.listen(port, () => {
