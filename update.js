@@ -16,7 +16,7 @@ const scheduleButtonClick = async (page) => {
     const buttonSelector = '[onclick="apireq()"]'; // Replace with the actual selector of the button
     const buttonEnabled = await page.waitForFunction(
         (selector) => !document.querySelector(selector).hasAttribute('disabled'),
-        { polling: 'raf' }, buttonSelector, 30000
+        { polling: 'raf' }, buttonSelector, { timeout: 30000 }
     );
 
     if (buttonEnabled) await page.click(buttonSelector);
@@ -50,6 +50,9 @@ const scheduleButtonClick = async (page) => {
 
         // Wait for the next page to load (you may need to adjust the navigation condition)
         await page.waitForNavigation();
+
+        // Wait for the button to be present on the page
+        await page.waitForSelector('[onclick="apireq()"]');
 
         const job = cron.schedule('*/20 * * * * *', async () => {
             try {
@@ -95,6 +98,9 @@ const scheduleButtonClick = async (page) => {
         // Wait for the next page to load (you may need to adjust the navigation condition)
         await page.waitForNavigation();
 
+        // Wait for the button to be present on the page
+        await page.waitForSelector('[onclick="apireq()"]');
+
         const job = cron.schedule('*/20 * * * * *', async () => {
             try {
                 console.log('Cron job started.');
@@ -112,7 +118,7 @@ const scheduleButtonClick = async (page) => {
 })();
 
 app.get('/', (_req, res) => {
-    return res.status(200).json({message:'Success'});
+    return res.status(200).json({ message: 'Success' });
 });
 
 app.listen(port, () => {
